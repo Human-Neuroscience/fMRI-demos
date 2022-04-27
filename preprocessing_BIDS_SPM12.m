@@ -217,24 +217,20 @@ in the order: deface -> fieldmap -> realign and unwarp -> slice time correction 
     if do_coregister
         clear matlabbatch;
         % use the mean EPI as the stationary reference image
-        matlabbatch{1}.spm.spatial.coreg.estwrite.ref = cellstr(spm_select('FPList', [derivativesdir subdir '\func\'], '^mean.*.nii$'));
+        matlabbatch{1}.spm.spatial.coreg.estimate.ref = cellstr(spm_select('FPList', [derivativesdir subdir '\func\'], '^mean.*.nii$'));
         % use the MPRAGE as the source image that will be warped to match the mean EPI
-        matlabbatch{1}.spm.spatial.coreg.estwrite.source = cellstr(spm_select('FPList', [basedir subdir '\anat\'], '^sub.*.nii$'));
-        matlabbatch{1}.spm.spatial.coreg.estwrite.other = {''};
-        matlabbatch{1}.spm.spatial.coreg.estwrite.eoptions.cost_fun = 'nmi';
-        matlabbatch{1}.spm.spatial.coreg.estwrite.eoptions.sep = [4 2];
-        matlabbatch{1}.spm.spatial.coreg.estwrite.eoptions.tol = [0.02 0.02 0.02 0.001 0.001 0.001 0.01 0.01 0.01 0.001 0.001 0.001];
-        matlabbatch{1}.spm.spatial.coreg.estwrite.eoptions.fwhm = [7 7];
-        matlabbatch{1}.spm.spatial.coreg.estwrite.roptions.interp = 4;
-        matlabbatch{1}.spm.spatial.coreg.estwrite.roptions.wrap = [0 0 0];
-        matlabbatch{1}.spm.spatial.coreg.estwrite.roptions.mask = 0;
-        matlabbatch{1}.spm.spatial.coreg.estwrite.roptions.prefix = 'r';
+        matlabbatch{1}.spm.spatial.coreg.estimate.source = cellstr(spm_select('FPList', [basedir subdir '\anat\'], '^sub.*.nii$'));
+        matlabbatch{1}.spm.spatial.coreg.estimate.other = {''};
+        matlabbatch{1}.spm.spatial.coreg.estimate.eoptions.cost_fun = 'nmi';
+        matlabbatch{1}.spm.spatial.coreg.estimate.eoptions.sep = [4 2];
+        matlabbatch{1}.spm.spatial.coreg.estimate.eoptions.tol = [0.02 0.02 0.02 0.001 0.001 0.001 0.01 0.01 0.01 0.001 0.001 0.001];
+        matlabbatch{1}.spm.spatial.coreg.estimate.eoptions.fwhm = [7 7];
         spm_jobman('run', matlabbatch);
         clear matlabbatch;
         
         %file management: move newly generated files into derivatives
         %folder
-        fname=spm_select('FPList',[basedir subdir '\anat\'],'^rsub.*.nii$');
+        fname=spm_select('FPList',[basedir subdir '\anat\'],'^sub.*.nii$');
         destination = regexprep(fname,'BIDS','derivatives');
         movefile (fname,destination)  ;
         
@@ -243,7 +239,7 @@ in the order: deface -> fieldmap -> realign and unwarp -> slice time correction 
     % segment T1 with inverse and forward models
     if do_segment == 1
         clear matlabbatch;
-        matlabbatch{1}.spm.spatial.preproc.channel.vols = cellstr(spm_select('FPList', [derivativesdir subdir '\anat\'], '^rsub.*.nii$'));
+        matlabbatch{1}.spm.spatial.preproc.channel.vols = cellstr(spm_select('FPList', [derivativesdir subdir '\anat\'], '^sub.*.nii$'));
         matlabbatch{1}.spm.spatial.preproc.channel.biasreg = 0.001;
         matlabbatch{1}.spm.spatial.preproc.channel.biasfwhm = 60;
         matlabbatch{1}.spm.spatial.preproc.channel.write = [0 0];
